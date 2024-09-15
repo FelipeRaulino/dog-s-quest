@@ -5,6 +5,17 @@ TagManager:
   serializedVersion: 2
   tags:
   - CamTrigger
+  - espadas
+  - SEspadas
+  - machado
+  - Smachado
+  - porta1boss
+  - porta2boss
+  - pegarMachado
+  - pegarEspada
+  - Ground
+  - OutsideWall
+  - enemy
   layers:
   - Default
   - TransparentFX

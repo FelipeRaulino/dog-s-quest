@@ -51,5 +51,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "Projeto Zelda.sln"
+    "dotnet.defaultSolution": "dog-s-quest-main.sln"
 }
