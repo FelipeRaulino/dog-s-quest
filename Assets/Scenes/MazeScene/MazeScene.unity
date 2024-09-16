@@ -16612,8 +16612,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 347628744}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.00000053747067, y: 0.9765173, z: -0.215439, w: 0.0000024361862}
-  m_LocalPosition: {x: 93.800026, y: -311.17157, z: -38.99188}
+  m_LocalRotation: {x: -0.00000026866084, y: 0.976517, z: -0.21544042, w: -0.0000012177467}
+  m_LocalPosition: {x: 93.80003, y: -311.1716, z: -38.991886}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -29262,8 +29262,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 986424914}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.00000053747067, y: 0.9765173, z: -0.215439, w: 0.0000024361862}
-  m_LocalPosition: {x: 93.800026, y: -311.17157, z: -38.99188}
+  m_LocalRotation: {x: -0.00000026866084, y: 0.976517, z: -0.21544042, w: -0.0000012177467}
+  m_LocalPosition: {x: 93.80003, y: -311.1716, z: -38.991886}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -47481,7 +47481,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   audioSource: {fileID: 1380941965}
   HP: 3
-  movimentSpeed: 3
+  movimentSpeed: 4
   turnSpeed: 90
   fxAttack: {fileID: 1156156066}
   hitBox: {fileID: 667977868}
