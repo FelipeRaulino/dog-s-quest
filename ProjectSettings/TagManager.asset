@@ -16,6 +16,8 @@ TagManager:
   - Ground
   - OutsideWall
   - enemy
+  - TakeDamage
+  - Coletavel
   layers:
   - Default
   - TransparentFX
@@ -25,8 +27,8 @@ TagManager:
   - UI
   - hitLayer
   - Enemy
-  - 
-  - 
+  - Player
+  - TakeDamage
   - 
   - 
   - 

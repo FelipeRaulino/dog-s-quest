@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 52e61ea628cad734f998b9514c416b4a
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 215414
+  packageName: Giant Animations
+  packageVersion: 1.1
+  assetPath: Assets/Kevin Iglesias/Giant Animations/AnimatorControllers/Giant@Idles.controller
+  uploadId: 644586
