@@ -13,17 +13,23 @@ public class PlayerControllerMaze : MonoBehaviour
     private CharacterController controller;
     private Animator animator;
 
+
+
     [Header("Sound effects")]
     public AudioSource swordSound;
     public AudioSource hpCollectedSound;
     public AudioSource deathSound;
     public AudioSource getHitSound;
 
+
+
     [Header("Config Config")]
     public float movimentSpeed = 8f;
     public float turnSpeed = 90f;
     private Vector3 direction;
     private bool isWalk;
+
+    
 
     [Header("Attack Config")]
     public ParticleSystem fxAttack;
@@ -143,7 +149,7 @@ public class PlayerControllerMaze : MonoBehaviour
         }
 
         if (other.gameObject.tag == "PassportSensor" && giantController.HP <= 0){
-            SceneManager.LoadScene("fase3-castelo");   
+            SceneManager.LoadScene("CutsceneFase2");   
         }
     }
 

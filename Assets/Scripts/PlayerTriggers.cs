@@ -9,6 +9,11 @@ public class PlayerTriggers : MonoBehaviour
 
     private GameManager _GameManager;
 
+
+    [Header("Sound Effects")]
+    public AudioSource hpCollectedSound;
+
+
     void Start(){
         _GameManager = FindObjectOfType(typeof(GameManager)) as GameManager;
     }
@@ -20,7 +25,11 @@ public class PlayerTriggers : MonoBehaviour
             break;
 
             case "LifePoint":
-                _GameManager.increaseHP(1);
+                if (hpCollectedSound != null) {
+                    hpCollectedSound.Play();
+                }
+                
+                _GameManager.IncreaseHP(1);
                 Destroy(other.gameObject);
                 break;
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public enum enemyState {
     IDLE, ALERT, PATROL, FOLLOW, FURY, DIE
@@ -14,15 +15,26 @@ public enum GameState {
 
 public class GameManager : MonoBehaviour
 {   
+    public GameState gameState;
+    public GameObject gameOverUI;
+
+    
     [Header("Player Info")]
     public Transform player;
-    public int HP;
+    public float HP;
+
+
 
     [Header("Slime IA")]
+    public Transform[] slimeWayPoints;
     public float slimeIdleWaitTime;
     public float slimeAlertWaitTime = 3f;
-    public Transform[] slimeWayPoints;
-    public float slimeStoppingDistance = 2.8f;
+    public float slimeStoppingDistance = 2.3f;
+    public float slimeDistanceToAttack = 2.3f;
+    public float slimeLookAtSpeed = 1f;
+    public float slimeAttackDelay = 1f;
+
+
 
     [Header("Rain Manager")]
     public PostProcessVolume postB;
@@ -33,14 +45,16 @@ public class GameManager : MonoBehaviour
     public float rainIncrementDelay;
 
 
+
     [Header("Drop Item")]
-    public GameObject gemPrefab;
+    public GameObject heartPrefab;
     public int percDrop = 25;
-    public Text txtGem;
+    public Text txtHP;
+
 
     private void Start(){
         rainModule = rainParticle.emission;
-        txtGem.text = HP.ToString();
+        txtHP.text = HP.ToString();
     }
 
     public void OnOffRain(bool isRain){
@@ -96,14 +110,19 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void increaseHP(int amount){
+    public void IncreaseHP(float amount){
         HP += amount;
-        txtGem.text = HP.ToString();
+        txtHP.text = HP.ToString();
     }
 
-    public void decreaseHP(int amount){
+    public void DecreaseHP(float amount){
         HP -= amount;
-        txtGem.text = HP.ToString();
+
+        if (HP >= 0){
+            txtHP.text = HP.ToString();
+        } else {
+            txtHP.text = "0";
+        }
     }
 
     public bool Perc(int p){
@@ -111,4 +130,21 @@ public class GameManager : MonoBehaviour
         bool retorno = temp <= p ? true : false;
         return retorno;
     }
+
+    public void ChangeGameState(GameState newState) {
+        gameState = newState;
+    }
+
+    public void GameOver(){
+        gameOverUI.SetActive(true);
+    }
+
+    public void Restart(){
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void Quit(){
+        Application.Quit();
+    }
+
 }

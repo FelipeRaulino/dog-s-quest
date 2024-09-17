@@ -24,18 +24,24 @@ public class MazeGameManager : MonoBehaviour
     public float slimeLookAtSpeed = 1f;
     public float slimeStopDistance = 1f;
 
-    public Text txtGem;
+    public Text txtHP;
     public GameObject heartPrefab;
     public int percDrop = 75;
+    
 
     public void increaseHP(float amount){
         HP += amount;
-        txtGem.text = HP.ToString();
+        txtHP.text = HP.ToString();
     }
 
     public void decreaseHP(float amount){
         HP -= amount;
-        txtGem.text = HP.ToString();
+
+        if (HP >= 0){
+            txtHP.text = HP.ToString();
+        } else {
+            txtHP.text = "0";
+        }
     }
 
     public bool Perc(int p){

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.SceneManagement;
 
 
 public class GiantController : MonoBehaviour
@@ -16,7 +17,9 @@ public class GiantController : MonoBehaviour
     private bool isPlayerVisible;
     private bool isWalk;
     public int HP = 3;
-    private bool isDied;
+    private bool isDied;    
+
+
 
     [Header("Sound effects")]
     public AudioSource getHitSound;
@@ -78,7 +81,7 @@ public class GiantController : MonoBehaviour
             {
                 case enemyState.FURY:
                     destination = transform.position;
-                    agent.stoppingDistance = 2.5f;
+                    agent.stoppingDistance = 2.3f;
                     agent.SetDestination(destination);
                     break;
 
@@ -106,11 +109,6 @@ public class GiantController : MonoBehaviour
     IEnumerator Died(){
         isDied = true;
         yield return new WaitForSeconds(5f);
-
-        /* if (_GameManager.Perc(_GameManager.percDrop)){
-            Instantiate(_GameManager.gemPrefab, transform.position, _GameManager.gemPrefab.transform.rotation);
-        } */
-
         Destroy(this.gameObject);
     }
 
