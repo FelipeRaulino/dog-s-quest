@@ -3,7 +3,13 @@ guid: 794ae51046569f548ad90b42f6a6189e
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - mainCamera: {instanceID: 0}
+  - camera2: {instanceID: 0}
+  - camera3: {instanceID: 0}
+  - somRampa: {instanceID: 0}
+  - somGrade: {instanceID: 0}
+  - jogador: {fileID: 6063108168959291025, guid: 1679625850656a349b26a25ffa48af8d, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

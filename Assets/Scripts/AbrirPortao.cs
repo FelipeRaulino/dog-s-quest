@@ -1,3 +1,4 @@
+using UnityEditor.Animations;
 using UnityEngine;
 
 public class AbrirPortaoController : MonoBehaviour
@@ -7,15 +8,21 @@ public class AbrirPortaoController : MonoBehaviour
 
     private GameObject ramp;
     private GameObject grid;
+    public GameObject boss;
 
     // Referências para as câmeras
     public Camera mainCamera;    // A câmera principal (Main Camera)
     public Camera camera2;       // A segunda câmera
+    public Camera camera3;
 
     // Referências para os sons
     public AudioClip somRampa;
     public AudioClip somGrade;
     private AudioSource audioSource;
+
+    private bool fechar = false;
+    private bool passou = false;
+    public GameObject jogador;
 
     void Start(){
         // Encontra o objeto filho chamado "ramp"
@@ -58,6 +65,31 @@ public class AbrirPortaoController : MonoBehaviour
                 grade = false;
             }
         }
+        // Recebe a posição do jogador
+        Vector3 jogadorPosicao = jogador.transform.position;
+
+        // Verifica se o jogador está na posição z igual a 100 e x entre -135 e -177
+        if (jogadorPosicao.z >= 100 && jogadorPosicao.x >= -177 && jogadorPosicao.x <= -135 && !passou)
+        {
+            cameraDeNovo(); // Chama o método
+        }
+        //recebe a posicao do jogador
+        //se a posicao do jogador. Se a posicao z do jogador for 100 e x estiver entre -135 e -177
+        //chama o metodo mudar cameraDeNovo
+        if (fechar && !passou)
+        {
+            Vector3 currentPosition = grid.transform.localPosition;
+
+            // Interpola a posição Y de seu valor atual até 0
+            currentPosition.y = Mathf.Lerp(currentPosition.y, 0f, Time.deltaTime * 2f);
+            grid.transform.localPosition = currentPosition;
+
+            // Verifica se a posição está suficientemente perto de 0
+            if (Mathf.Abs(currentPosition.y - 0f) < 0.1f)
+            {
+                passou = true; // Marca que o movimento terminou
+            }
+        }
     }
 
     public void AbrirRampa()
@@ -86,6 +118,19 @@ public class AbrirPortaoController : MonoBehaviour
         Invoke("voltarCamera", 2f);
     }
 
+
+    void cameraDeNovo(){
+        BoxCollider meshCollider = grid.GetComponent<BoxCollider>();
+        meshCollider.enabled = true;
+        audioSource.PlayOneShot(somGrade);
+        fechar = true;
+        mainCamera.enabled = false;
+        camera3.enabled = true;
+        // Desativar o AudioListener da mainCamera e ativar na camera2
+        mainCamera.GetComponent<AudioListener>().enabled = false;
+        camera3.GetComponent<AudioListener>().enabled = true;
+        Invoke("voltarCameraDeNovo", 2f);
+    }
     void mudarCamera(){
         mainCamera.enabled = false;
         camera2.enabled = true;
@@ -104,4 +149,16 @@ public class AbrirPortaoController : MonoBehaviour
         mainCamera.GetComponent<AudioListener>().enabled = true;
         audioSource.Stop();
     }
+    void voltarCameraDeNovo(){
+        camera3.enabled = false;
+        mainCamera.enabled = true;
+
+        // Desativar o AudioListener da camera2 e ativar na mainCamera
+        camera3.GetComponent<AudioListener>().enabled = false;
+        mainCamera.GetComponent<AudioListener>().enabled = true;
+        audioSource.Stop();
+        Animator animator = boss.GetComponent<Animator>();
+        animator.SetBool("podeAndar", true);
+    }
+    
 }
