@@ -4,22 +4,30 @@ using Unity.VisualScripting;
 
 public class GoblinController : MonoBehaviour
 {
-    public Transform jogador; // Referência ao jogador para calcular a distância
-    private int vidas = 3;
+    private Transform jogador; // Referência ao jogador para calcular a distância
     private bool morto = false;
-    private GameObject espada; // Referência à espada do Goblin (com o Capsule Collider)
     private CapsuleCollider espadaCollider;
-    public float velocidadeMovimento = 3f; // Velocidade de movimento do Goblin
+    public float velocidadeMovimento = 5f; // Velocidade de movimento do Goblin
     private Animator animator; // Referência ao Animator
-
-    // Adicionando variável para cooldown
-    public float cooldownColisao = 1.5f; // Tempo de cooldown entre colisões
-    private bool podeCausarDano = true;  // Controla se a espada pode causar dano
+    private bool podeAndar = true;
+    public AudioClip somCaminhada;
+    public AudioClip somEspada; 
+    private AudioSource audioSource;
 
     void Start()
     {
         // Obtém o componente Animator que está no mesmo GameObject
         animator = GetComponent<Animator>();
+        animator.SetBool("podeAndar", true);
+        audioSource = GetComponent<AudioSource>();
+        // Encontra o jogador pelo tag "Player" e pega o componente Transform
+        GameObject playerObject = GameObject.FindWithTag("Player");
+
+        // Verifica se o jogador foi encontrado
+        if (playerObject != null)
+        {
+            jogador = playerObject.transform; // Atribui o Transform do jogador
+        }
 
         // Encontra a espada do Goblin pelo nome na hierarquia
         Transform espadaTransform = transform.Find("MainSword");
@@ -31,6 +39,8 @@ public class GoblinController : MonoBehaviour
 
     void Update()
     {
+        morto = animator.GetBool("morto");
+        podeAndar = animator.GetBool("podeAndar");
         // Calcula a distância entre o Goblin e o jogador
         float distanciaParaJogador = Vector3.Distance(transform.position, jogador.position);
 
@@ -38,7 +48,7 @@ public class GoblinController : MonoBehaviour
         animator.SetFloat("distancia", distanciaParaJogador);
 
         // Se o Goblin está longe o suficiente do jogador, mova-se em direção a ele
-        if (distanciaParaJogador > 2.5f && !morto && distanciaParaJogador < 15) // Parar perto do jogador
+        if (distanciaParaJogador > 2.5f && !morto && distanciaParaJogador < 20 && podeAndar) // Parar perto do jogador
         {
             DesativarColliderEspada();
             // Calcula a direção para o jogador
@@ -49,11 +59,29 @@ public class GoblinController : MonoBehaviour
 
             // Move o Goblin na direção do jogador
             transform.Translate(direcao * velocidadeMovimento * Time.deltaTime, Space.World);
+            if (!audioSource.isPlaying)
+                {
+                    audioSource.clip = somCaminhada;
+                    audioSource.time = 0.5f;
+                    audioSource.loop = true; // Deixa o som de caminhada em loop
+                    audioSource.Play();
+                }
         }
-        else if(!morto)
+        else if(distanciaParaJogador < 3 && !morto)
         {
+            audioSource.Stop();
+            audioSource.clip = somEspada;
+            audioSource.Play();
+            Invoke("paraAudio",0.4f);
             AtivarColliderEspada();
+        }else{
+            audioSource.Stop();
+            DesativarColliderEspada();
         }
+    }
+    void paraAudio()
+    {
+        audioSource.Stop();
     }
 
     public void AtivarColliderEspada()
@@ -64,50 +92,5 @@ public class GoblinController : MonoBehaviour
     public void DesativarColliderEspada()
     {
         espadaCollider.enabled = false;
-    }
-
-    // Detecta a colisão contínua entre a espada e o jogador usando OnTriggerStay
-    void OnTriggerStay(Collider other)
-    {
-        if (other.CompareTag("Player") && podeCausarDano) // Certifique-se de que o jogador tem a tag "Player"
-        {
-            PlayerController jogador = other.GetComponentInParent<PlayerController>();
-
-            if (jogador != null)
-            {
-                jogador.TomarDano(1); // Causa 1 de dano ao jogador
-                Debug.Log("O jogador foi atingido pela espada do Goblin!");
-
-                // Inicia o cooldown para impedir múltiplas colisões consecutivas
-                StartCoroutine(CooldownColisao());
-            }
-        }
-    }
-
-    // Corrotina que controla o cooldown de colisão
-    IEnumerator CooldownColisao()
-    {
-        podeCausarDano = false; // Desativa a capacidade de causar dano
-        yield return new WaitForSeconds(cooldownColisao); // Espera pelo tempo de cooldown
-        podeCausarDano = true;  // Permite causar dano novamente
-    }
-    public void TomarDano(){
-        vidas -= 1;
-        if (vidas <= 0)
-        {
-            morrer();
-        }else{
-            tomarhit();
-        }
-    }
-    void Suma(){
-        Destroy(gameObject);
-    }
-    void morrer(){
-        animator.SetBool("morto", true);
-        Invoke("Suma",3f);
-    }
-    void tomarhit(){
-        animator.SetTrigger("dano");
     }
 }

@@ -1,146 +1,107 @@
 using UnityEngine;
 
-public class MachadoController : MonoBehaviour
+public class AbrirPortaoController : MonoBehaviour
 {
-    private bool temMachado = false; // Verifica se o jogador pegou o machado
-    private bool temEspada = false;
-    private bool portao1 = false;
-    private bool portao2 = false;
-    public GameObject machadoNovo; // Referência ao machado que o jogador está segurando
-    public GameObject espadaNova;
+    private bool rampa = false;
+    private bool grade = false;
 
-    private GameObject objetoMachado;
-    private GameObject objetoEspada;
+    private GameObject ramp;
+    private GameObject grid;
+
+    // Referências para as câmeras
+    public Camera mainCamera;    // A câmera principal (Main Camera)
+    public Camera camera2;       // A segunda câmera
+
+    // Referências para os sons
+    public AudioClip somRampa;
+    public AudioClip somGrade;
+    private AudioSource audioSource;
+
+    void Start(){
+        // Encontra o objeto filho chamado "ramp"
+        ramp = transform.Find("Ramp").gameObject;
+        // Encontra o objeto filho chamado "grid"
+        grid = transform.Find("Grid").gameObject;
+
+        // Inicializa o AudioSource
+        audioSource = GetComponent<AudioSource>();
+    }
 
     void Update()
     {
-        // Detecta a tecla de espaço para pegar ou trocar itens
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (rampa)
         {
-            if (portao1 && portao2)
-            {
-                AbrirPortao();
-            }
-            else
-            {
-                if (!temMachado && objetoMachado != null)
-                {
-                    PegarMachado();
-                }
-                else if (temMachado && objetoMachado != null)
-                {
-                    TrocarMachado();
-                }
+            Vector3 currentRotation = ramp.transform.localEulerAngles;
 
-                if (!temEspada && objetoEspada != null)
-                {
-                    PegarEspada();
-                }
-                else if (temEspada && objetoEspada != null)
-                {
-                    TrocarEspada();
-                }
+            if (currentRotation.x > 180)
+            {
+                currentRotation.x -= 360;
+            }
+
+            currentRotation.x = Mathf.Lerp(currentRotation.x, 0f, Time.deltaTime * 2f);
+            ramp.transform.localEulerAngles = new Vector3(currentRotation.x, currentRotation.y, currentRotation.z);
+
+            if (Mathf.Abs(currentRotation.x) < 0.1f)
+            {
+                rampa = false;
             }
         }
-    }
 
-    // Função para pegar o machado
-    void PegarMachado()
-    {
-        if (objetoMachado != null)
+        if (grade)
         {
-            temMachado = true; // Marca que o jogador pegou o machado
-            objetoMachado.SetActive(false); // Desativa o machado na cena
-            Debug.Log("Machado pegado!");
-        }
-    }
+            Vector3 currentPosition = grid.transform.localPosition;
+            currentPosition.y = Mathf.Lerp(currentPosition.y, 2.4f, Time.deltaTime * 2f);
+            grid.transform.localPosition = currentPosition;
 
-    // Função para pegar a espada
-    void PegarEspada()
-    {
-        if (objetoEspada != null)
-        {
-            temEspada = true; // Marca que o jogador pegou a espada
-            objetoEspada.SetActive(false); // Desativa a espada na cena
-            Debug.Log("Espada pegada!");
+            if (Mathf.Abs(currentPosition.y - 2.4f) < 0.1f)
+            {
+                grade = false;
+            }
         }
     }
 
-    // Função para trocar o machado de posição com outro objeto
-    void TrocarMachado()
+    public void AbrirRampa()
     {
-        if (objetoMachado != null && machadoNovo != null)
-        {
-            Vector3 posicaoTemporaria = objetoMachado.transform.position;
-            objetoMachado.transform.position = machadoNovo.transform.position;
-            machadoNovo.transform.position = posicaoTemporaria;
-            portao1 = true;
-            Debug.Log("Machado trocado de posição!");
-        }
+         // Definir o ponto inicial do áudio (começando em 0.5 segundos)
+        audioSource.clip = somRampa;
+        audioSource.time = 0.5f; // Começar a partir de 0.5 segundos
+        audioSource.Play();
+        rampa = true;
+        MeshCollider meshCollider = ramp.GetComponent<MeshCollider>();
+        meshCollider.enabled = false;
+
+        mudarCamera();
+        Invoke("voltarCamera", 2f);
     }
 
-    // Função para trocar a espada de posição com outro objeto
-    void TrocarEspada()
+    public void AbrirGrade()
     {
-        if (objetoEspada != null && espadaNova != null)
-        {
-            Vector3 posicaoTemporaria = objetoEspada.transform.position;
-            objetoEspada.transform.position = espadaNova.transform.position;
-            espadaNova.transform.position = posicaoTemporaria;
-            portao2 = true;
-            Debug.Log("Espada trocada de posição!");
-        }
+        grade = true;
+        BoxCollider meshCollider = grid.GetComponent<BoxCollider>();
+        meshCollider.enabled = false;
+        
+        audioSource.PlayOneShot(somGrade);
+
+        mudarCamera();
+        Invoke("voltarCamera", 2f);
     }
 
-    // Detecta quando o jogador entra em contato com objetos
-    void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("pegarMachado"))
-        {
-            objetoMachado = other.gameObject;
-            Debug.Log("Machado detectado!");
-        }
-        else if (other.CompareTag("pegarEspada"))
-        {
-            objetoEspada = other.gameObject;
-            Debug.Log("Espada detectada!");
-        }
+    void mudarCamera(){
+        mainCamera.enabled = false;
+        camera2.enabled = true;
+
+        // Desativar o AudioListener da mainCamera e ativar na camera2
+        mainCamera.GetComponent<AudioListener>().enabled = false;
+        camera2.GetComponent<AudioListener>().enabled = true;
     }
-    void OnCollisionEnter(Collision collision)
-{
-    Debug.Log("Colidiu com: " + collision.gameObject.name);
-}
+    
+    void voltarCamera(){
+        camera2.enabled = false;
+        mainCamera.enabled = true;
 
-    // Detecta quando o jogador sai de contato com os objetos
-    void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("pegarMachado"))
-        {
-            objetoMachado = null;
-            Debug.Log("Machado fora de alcance!");
-        }
-        else if (other.CompareTag("pegarEspada"))
-        {
-            objetoEspada = null;
-            Debug.Log("Espada fora de alcance!");
-        }
-    }
-
-    // Função para abrir o portão, rotacionando os filhos
-    void AbrirPortao()
-    {
-        Transform porta1 = transform.Find("porta1boss");
-        Transform porta2 = transform.Find("porta2boss");
-
-        if (porta1 != null)
-        {
-            porta1.Rotate(0, 85, 0);
-        }
-        if (porta2 != null)
-        {
-            porta2.Rotate(0, -85, 0);
-        }
-
-        Debug.Log("Portão aberto!");
+        // Desativar o AudioListener da camera2 e ativar na mainCamera
+        camera2.GetComponent<AudioListener>().enabled = false;
+        mainCamera.GetComponent<AudioListener>().enabled = true;
+        audioSource.Stop();
     }
 }
