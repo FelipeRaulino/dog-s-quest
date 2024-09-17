@@ -18,6 +18,8 @@ TagManager:
   - enemy
   - TakeDamage
   - Coletavel
+  - LifePoint
+  - PassportSensor
   layers:
   - Default
   - TransparentFX

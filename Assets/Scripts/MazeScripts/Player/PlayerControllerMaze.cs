@@ -3,16 +3,23 @@ using System.Collections.Generic;
 using Cinemachine;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PlayerControllerMaze : MonoBehaviour
 {
     private MazeGameManager _GameManager;
+    private GiantController giantController;
     private CharacterController controller;
     private Animator animator;
-    public AudioSource audioSource;
+
+    [Header("Sound effects")]
+    public AudioSource swordSound;
+    public AudioSource hpCollectedSound;
+    public AudioSource deathSound;
+    public AudioSource getHitSound;
 
     [Header("Config Config")]
-    public float HP;
     public float movimentSpeed = 8f;
     public float turnSpeed = 90f;
     private Vector3 direction;
@@ -32,13 +39,17 @@ public class PlayerControllerMaze : MonoBehaviour
     private float horizontal;
     private float vertical;
 
+    public Text txtHeartCount;
+
 
     // Start is called before the first frame update
     void Start()
     {   
         _GameManager = FindObjectOfType(typeof(MazeGameManager)) as MazeGameManager;
+        giantController = FindObjectOfType(typeof(GiantController)) as GiantController;
         controller = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
+        txtHeartCount.text = _GameManager.HP.ToString();
     }
 
     // Update is called once per frame
@@ -65,8 +76,8 @@ public class PlayerControllerMaze : MonoBehaviour
     }
 
     void Attack(){
-        if (audioSource != null) {
-            audioSource.Play();
+        if (swordSound != null) {
+            swordSound.Play();
         }
 
         isAttack = true;
@@ -96,13 +107,23 @@ public class PlayerControllerMaze : MonoBehaviour
     }
 
     void GetHit(float amount){
-        HP -= amount;
+        if (getHitSound != null) {
+            getHitSound  .Play();
+        }
 
-        if (HP > 0){
+        _GameManager.decreaseHP(amount);
+
+        txtHeartCount.text = _GameManager.HP.ToString();
+
+        if (_GameManager.HP > 0){
             animator.SetTrigger("Hit");
         } else {
-             _GameManager.ChangeGameState(GameState.DIE);
+            if (deathSound != null) {
+                deathSound  .Play();
+            }
+            _GameManager.ChangeGameState(GameState.DIE);
             animator.SetTrigger("Die");
+            _GameManager.GameOver();
         }
     }
 
@@ -111,6 +132,18 @@ public class PlayerControllerMaze : MonoBehaviour
     private void OnTriggerEnter(Collider other){
         if (other.gameObject.tag == "TakeDamage"){
             GetHit(0.5f);
+        }
+
+        if (other.gameObject.tag == "LifePoint"){
+            if (hpCollectedSound != null) {
+                hpCollectedSound.Play();
+            }
+            _GameManager.increaseHP(1f);
+            Destroy(other.gameObject);    
+        }
+
+        if (other.gameObject.tag == "PassportSensor" && giantController.HP <= 0){
+            SceneManager.LoadScene("fase3-castelo");   
         }
     }
 

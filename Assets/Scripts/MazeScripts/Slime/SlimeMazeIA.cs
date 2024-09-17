@@ -25,12 +25,22 @@ public class SlimeMazeIA : MonoBehaviour
     private int idWayPoint;
     private Vector3 destination;
 
+    public Transform[] slimeWayPoints;
+
+    [Header("Sound effects")]
+    public AudioSource getHitSound;
+
     void Start()
     {
         _GameManager = FindObjectOfType(typeof(MazeGameManager)) as MazeGameManager;
 
         animator = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
+
+        if (slimeWayPoints.Length == 0)
+        {
+            Debug.LogError("Slime sem waypoints configurados.");
+        }
 
         ChangeState(state);
     }
@@ -54,6 +64,10 @@ public class SlimeMazeIA : MonoBehaviour
         if (isDied == true) { return; }
 
         HP -= amount;
+
+        if (getHitSound != null) {
+            getHitSound.Play();
+        }
 
         if (HP > 0) {
             ChangeState(enemyState.FURY);
@@ -145,9 +159,19 @@ public class SlimeMazeIA : MonoBehaviour
             case enemyState.PATROL:
 
                 agent.stoppingDistance = _GameManager.slimeStopDistance;
-                idWayPoint = Random.Range(0, _GameManager.slimeWayPoints.Length);
-                destination = _GameManager.slimeWayPoints[idWayPoint].position;
-                agent.destination = destination;
+
+                // Verifica se há waypoints específicos para esse Slime
+                if (slimeWayPoints != null && slimeWayPoints.Length > 0)
+                {
+                    idWayPoint = Random.Range(0, slimeWayPoints.Length);
+                    destination = slimeWayPoints[idWayPoint].position;
+                    agent.destination = destination;
+                }
+                else
+                {
+                    Debug.LogWarning("Nenhum waypoint configurado para este slime.");
+                    ChangeState(enemyState.IDLE); // Ou você pode colocar outro comportamento aqui
+                }
 
                 StartCoroutine("PATROL");
 
@@ -225,9 +249,10 @@ public class SlimeMazeIA : MonoBehaviour
         isDied = true;
         yield return new WaitForSeconds(2.5f);
 
-        /* if (_GameManager.Perc(_GameManager.percDrop)){
-            Instantiate(_GameManager.gemPrefab, transform.position, _GameManager.gemPrefab.transform.rotation);
-        } */
+        if (_GameManager.Perc(_GameManager.percDrop)){
+            Vector3 spawnPosition = new Vector3(transform.position.x, transform.position.y + 1.0f, transform.position.z);
+            Instantiate(_GameManager.heartPrefab, spawnPosition, _GameManager.heartPrefab.transform.rotation);
+        }
 
         Destroy(this.gameObject);
     }
@@ -249,8 +274,6 @@ public class SlimeMazeIA : MonoBehaviour
             isAttack = true;
             animator.SetTrigger("Attack");
         }
-
-        StartCoroutine("ATTACK");
     }
 
     void LookAt(){

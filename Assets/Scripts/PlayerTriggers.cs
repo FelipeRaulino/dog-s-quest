@@ -19,8 +19,8 @@ public class PlayerTriggers : MonoBehaviour
                 camB.SetActive(true);
             break;
 
-            case "Coletavel":
-                _GameManager.setGems(1);
+            case "LifePoint":
+                _GameManager.increaseHP(1);
                 Destroy(other.gameObject);
                 break;
         }

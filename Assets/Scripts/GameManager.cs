@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour
 {   
     [Header("Player Info")]
     public Transform player;
-    private int gems;
+    public int HP;
 
     [Header("Slime IA")]
     public float slimeIdleWaitTime;
@@ -40,7 +40,7 @@ public class GameManager : MonoBehaviour
 
     private void Start(){
         rainModule = rainParticle.emission;
-        txtGem.text = gems.ToString();
+        txtGem.text = HP.ToString();
     }
 
     public void OnOffRain(bool isRain){
@@ -96,9 +96,14 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void setGems(int amount){
-        gems += amount;
-        txtGem.text = gems.ToString();
+    public void increaseHP(int amount){
+        HP += amount;
+        txtGem.text = HP.ToString();
+    }
+
+    public void decreaseHP(int amount){
+        HP -= amount;
+        txtGem.text = HP.ToString();
     }
 
     public bool Perc(int p){
