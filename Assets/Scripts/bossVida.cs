@@ -55,10 +55,6 @@ public class bossVida : MonoBehaviour
         morto = true;
         Invoke("Suma",3f);
     }
-    void podeAndar(){
-        animator.SetBool("podeAndar", true);
-        animator.ResetTrigger("dano"); // Reseta o trigger para evitar que a animação se repita
-    }
     void mortinho(){
         animator.SetBool("morto", true);
     }

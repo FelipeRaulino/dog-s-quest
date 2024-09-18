@@ -8,7 +8,7 @@ public class CameraTransparency : MonoBehaviour
     public LayerMask obstacleLayer; // Layer dos objetos que podem bloquear a visão
     public string groundTag = "Ground"; // A tag para identificar o chão e outros objetos a serem ignorados
     public string outsideWallTag = "OutsideWall"; // A tag para identificar as paredes externas
-    public String enemyTag = "enemy";
+    public string enemyTag = "enemy"; // Tag para inimigos, a serem ignorados
 
     private List<Renderer> currentRenderers = new List<Renderer>(); // Lista dos renderizadores atuais
     private List<Material[]> originalMaterials = new List<Material[]>(); // Lista dos materiais originais
@@ -24,17 +24,25 @@ public class CameraTransparency : MonoBehaviour
 
         foreach (RaycastHit hit in hits)
         {
-            // Verifica se o objeto tem a tag de chão para ignorá-lo
+            // Verifica se o objeto tem a tag de chão ou inimigo para ignorá-lo
             if (hit.collider.CompareTag(groundTag) || hit.collider.CompareTag(enemyTag))
                 continue;
-
 
             Renderer renderer = hit.collider.gameObject.GetComponent<Renderer>();
             if (renderer != null)
             {
-                // Armazena o material original
+                // Armazena o material original (copia o array de materiais)
                 currentRenderers.Add(renderer);
                 originalMaterials.Add(renderer.materials);
+
+                // Cria instâncias dos materiais para modificar sem afetar os originais
+                Material[] newMaterials = new Material[renderer.materials.Length];
+                for (int i = 0; i < renderer.materials.Length; i++)
+                {
+                    newMaterials[i] = new Material(renderer.materials[i]); // Instancia o material
+                }
+
+                renderer.materials = newMaterials; // Aplica os materiais instanciados
 
                 // Verifica se o objeto é uma parede externa e o torna completamente transparente
                 if (hit.collider.CompareTag(outsideWallTag))
@@ -63,7 +71,7 @@ public class CameraTransparency : MonoBehaviour
         {
             if (currentRenderers[i] != null)
             {
-                currentRenderers[i].materials = originalMaterials[i];
+                currentRenderers[i].materials = originalMaterials[i]; // Restaura os materiais originais
             }
         }
         currentRenderers.Clear();
