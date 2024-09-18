@@ -4,16 +4,19 @@ using System.Collections.Generic;
 using Cinemachine;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 public class PlayerController : MonoBehaviour
 {
     private Rigidbody rb;
     private Animator animator;
+    public GameObject gameOverUI;
 
     [Header("Moviment Config")]
     public float movementSpeed = 4f;
     public float rotationSpeed = 720f;  // Velocidade de rotação (graus por segundo)
     private Vector3 direction;
     private bool isWalking = false;
+    private bool gameOverTela = false;
 
     [Header("Attack Config")]
     public ParticleSystem fxAttack;
@@ -32,7 +35,7 @@ public class PlayerController : MonoBehaviour
     private float horizontal;
     private float vertical;
     private bool morto = false;
-
+    public GameObject espada;
     private CapsuleCollider espadaCollider;
     public float cooldownColisao = 1.5f; // Tempo de cooldown entre colisões
     public AudioClip somCaminhada;
@@ -41,10 +44,12 @@ public class PlayerController : MonoBehaviour
     public AudioClip somDano;
     private AudioSource audioSource;
     private bool podeTomarDano = true;
+    public Text txtHP;
 
     // Start is called before the first frame update
     void Start()
     {
+        txtHP.text = vidas.ToString();
         rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
 
@@ -52,8 +57,8 @@ public class PlayerController : MonoBehaviour
         rb.isKinematic = false;
         rb.freezeRotation = true;  // Previne a rotação automática pelo Rigidbody
         // Encontra a espada do Goblin pelo nome na hierarquia
-        Transform espadaTransform = transform.Find("root/pelvis/Weapon");
-        espadaCollider = espadaTransform.GetComponent<CapsuleCollider>();
+        
+        espadaCollider = espada.GetComponent<CapsuleCollider>();
 
         // Desativa o Collider da espada no início para evitar colisões fora do ataque
         espadaCollider.enabled = false;
@@ -64,11 +69,22 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(!isAttacking){
+            DesativarColliderEspada();
+        }
         if (!morto)
         {
             Inputs();
             UpdateAnimator();
             MoveCharacter();
+        }
+        if(gameOverTela){
+            if(Input.GetKey(KeyCode.Space)){
+                Restart();
+            }
+            if(Input.GetKey(KeyCode.E)){
+                Quit();
+            }
         }
     }
     #region MEUS MÉTODOS
@@ -111,15 +127,15 @@ public class PlayerController : MonoBehaviour
         animator.SetTrigger("isAttack");
         fxAttack.Emit(1);
 
-        Invoke("AttackIsDone", 0.8f); // Tempo para terminar a animação do ataque
-        Invoke("ResetAttackCooldown", 0.7f); // 3 segundos de cooldown de ataque
+        Invoke("AttackIsDone", 1f); // Tempo para terminar a animação do ataque
+        Invoke("ResetAttackCooldown", 1.3f); // segundos de cooldown de ataque
         Invoke("paraAudio",0.4f);
     }
 
     void AttackIsDone()
     {
         isAttacking = false;
-        DesativarColliderEspada();
+        
     }
 
     void ResetAttackCooldown()
@@ -134,7 +150,7 @@ public class PlayerController : MonoBehaviour
 
     public void DesativarColliderEspada()
     {
-        //espadaCollider.enabled = false;
+        espadaCollider.enabled = false;
     }
 
     void MoveCharacter()
@@ -214,6 +230,7 @@ public class PlayerController : MonoBehaviour
         {
             podeTomarDano = false;
             vidas -= dano;
+            txtHP.text = vidas.ToString();
             audioSource.clip = somDano;
             audioSource.Play();
 
@@ -245,7 +262,7 @@ public class PlayerController : MonoBehaviour
         animator.SetBool("morto", true);
         morto = true;
         animator.SetTrigger("morreu");
-        StartCoroutine(ReiniciarFaseAposDelay(3f)); // Inicia a corrotina para reiniciar a fase após 5 segundos
+        Invoke("GameOver",3f); // Inicia a corrotina para reiniciar a fase após 5 segundos
     }
 
     void Sairdohit()
@@ -260,10 +277,14 @@ public class PlayerController : MonoBehaviour
         animator.SetBool("tomarHit", true);
         Invoke("Sairdohit", 0.5f);
     }
-
-    IEnumerator ReiniciarFaseAposDelay(float delay)
-    {
-        yield return new WaitForSeconds(delay); // Espera o tempo especificado (5 segundos)
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name); // Recarrega a cena atual
+    public void Restart(){
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+    public void Quit(){
+        SceneManager.LoadScene("Scenes/Menu/Menu");
+    }
+    public void GameOver(){
+        gameOverUI.SetActive(true);
+        gameOverTela = true;
     }
 }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class bossVida : MonoBehaviour
 {
@@ -47,6 +48,7 @@ public class bossVida : MonoBehaviour
     }
     void Suma(){
         Destroy(gameObject);
+        SceneManager.LoadScene("Scenes/Cutscenes/03 - Cutscene Final/CutsceneFinal");
     }
     void morrer(){
         animator.SetBool("podeAndar", false);

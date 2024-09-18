@@ -49,7 +49,6 @@ public class BossController : MonoBehaviour
         // Se o Goblin está longe o suficiente do jogador, mova-se em direção a ele
         if (distanciaParaJogador > 4f && !morto && podeAndar) // Parar perto do jogador
         {
-            DesativarColliderMachado();
             // Calcula a direção para o jogador
             Vector3 direcao = (jogador.position - transform.position).normalized;
 
@@ -72,7 +71,8 @@ public class BossController : MonoBehaviour
             audioSource.clip = somEspada;
             audioSource.Play();
             Invoke("paraAudio",0.4f);
-            AtivarColliderMachado();
+            Invoke("AtivarColliderMachado", 0.2f);
+            Invoke("DesativarColliderMachado", 0.8f);
         }
     }
     public void AtivarColliderMachado()
