@@ -1,4 +1,3 @@
-using UnityEditor.Animations;
 using UnityEngine;
 
 public class AbrirPortaoController : MonoBehaviour
@@ -24,7 +23,8 @@ public class AbrirPortaoController : MonoBehaviour
     private bool passou = false;
     public GameObject jogador;
 
-    void Start(){
+    void Start()
+    {
         // Encontra o objeto filho chamado "ramp"
         ramp = transform.Find("Ramp").gameObject;
         // Encontra o objeto filho chamado "grid"
@@ -65,6 +65,7 @@ public class AbrirPortaoController : MonoBehaviour
                 grade = false;
             }
         }
+
         // Recebe a posição do jogador
         Vector3 jogadorPosicao = jogador.transform.position;
 
@@ -73,9 +74,7 @@ public class AbrirPortaoController : MonoBehaviour
         {
             cameraDeNovo(); // Chama o método
         }
-        //recebe a posicao do jogador
-        //se a posicao do jogador. Se a posicao z do jogador for 100 e x estiver entre -135 e -177
-        //chama o metodo mudar cameraDeNovo
+
         if (fechar && !passou)
         {
             Vector3 currentPosition = grid.transform.localPosition;
@@ -94,7 +93,7 @@ public class AbrirPortaoController : MonoBehaviour
 
     public void AbrirRampa()
     {
-         // Definir o ponto inicial do áudio (começando em 0.5 segundos)
+        // Definir o ponto inicial do áudio (começando em 0.5 segundos)
         audioSource.clip = somRampa;
         audioSource.time = 0.5f; // Começar a partir de 0.5 segundos
         audioSource.Play();
@@ -111,15 +110,15 @@ public class AbrirPortaoController : MonoBehaviour
         grade = true;
         BoxCollider meshCollider = grid.GetComponent<BoxCollider>();
         meshCollider.enabled = false;
-        
+
         audioSource.PlayOneShot(somGrade);
 
         mudarCamera();
         Invoke("voltarCamera", 2f);
     }
 
-
-    void cameraDeNovo(){
+    void cameraDeNovo()
+    {
         BoxCollider meshCollider = grid.GetComponent<BoxCollider>();
         meshCollider.enabled = true;
         audioSource.PlayOneShot(somGrade);
@@ -131,7 +130,9 @@ public class AbrirPortaoController : MonoBehaviour
         camera3.GetComponent<AudioListener>().enabled = true;
         Invoke("voltarCameraDeNovo", 2f);
     }
-    void mudarCamera(){
+
+    void mudarCamera()
+    {
         mainCamera.enabled = false;
         camera2.enabled = true;
 
@@ -139,8 +140,9 @@ public class AbrirPortaoController : MonoBehaviour
         mainCamera.GetComponent<AudioListener>().enabled = false;
         camera2.GetComponent<AudioListener>().enabled = true;
     }
-    
-    void voltarCamera(){
+
+    void voltarCamera()
+    {
         camera2.enabled = false;
         mainCamera.enabled = true;
 
@@ -149,7 +151,9 @@ public class AbrirPortaoController : MonoBehaviour
         mainCamera.GetComponent<AudioListener>().enabled = true;
         audioSource.Stop();
     }
-    void voltarCameraDeNovo(){
+
+    void voltarCameraDeNovo()
+    {
         camera3.enabled = false;
         mainCamera.enabled = true;
 
@@ -160,5 +164,4 @@ public class AbrirPortaoController : MonoBehaviour
         Animator animator = boss.GetComponent<Animator>();
         animator.SetBool("podeAndar", true);
     }
-    
 }

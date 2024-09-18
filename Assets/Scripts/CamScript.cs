@@ -4,7 +4,7 @@ public class CameraFollow : MonoBehaviour
 {
     public Transform target;  // Referência ao personagem que a câmera seguirá
     Vector3 offset = new Vector3(20f, 10f, 0f);    // Distância e ângulo fixos da câmera em relação ao personagem
-    public float smoothSpeed = 0.125f;  // Controla a suavidade da movimentação da câmera
+    public float smoothSpeed = 0.001f;  // Controla a suavidade da movimentação da câmera
 
     void LateUpdate()
     {
