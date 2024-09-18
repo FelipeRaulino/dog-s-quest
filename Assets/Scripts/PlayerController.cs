@@ -172,11 +172,11 @@ public class PlayerController : MonoBehaviour
 
                 // Rotaciona o personagem suavemente em direção à direção desejada
                 Quaternion targetRotation = Quaternion.LookRotation(direction);
-                rb.MoveRotation(Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime));
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
 
-                // Move o personagem
-                Vector3 moveDirection = direction * movementSpeed * Time.fixedDeltaTime;
-                rb.MovePosition(rb.position + moveDirection);
+                // Move o personagem usando Translate
+                Vector3 moveDirection = direction * movementSpeed * Time.deltaTime;
+                transform.Translate(moveDirection, Space.World); // Movendo no espaço global para seguir a direção da câmera
             }
             else
             {
