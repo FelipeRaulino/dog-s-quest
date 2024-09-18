@@ -2,17 +2,33 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Video;
+using UnityEngine.UI; 
 
 public class ScriptCutscene : MonoBehaviour
 {
     public VideoPlayer videoPlayer;
     public GameObject loadingScreen;
+    public Button skipButton; 
 
     void Start()
     {
         loadingScreen.SetActive(true);
         videoPlayer.playOnAwake = false;
         StartCoroutine(LoadVideo());
+
+        skipButton.gameObject.SetActive(false);
+        Invoke("ShowSkipButton", 5);
+        skipButton.onClick.AddListener(SkipVideo);
+    }
+    void ShowSkipButton()
+    {
+        skipButton.gameObject.SetActive(true);
+        Invoke("HideSkipButton", 8);
+    }
+
+    void HideSkipButton()
+    {
+        skipButton.gameObject.SetActive(false);
     }
 
     IEnumerator LoadVideo()
@@ -32,5 +48,11 @@ public class ScriptCutscene : MonoBehaviour
     void CheckVideoEnd(VideoPlayer vp)
     {
         SceneManager.LoadScene("FlorestScene");
+    }
+
+    public void SkipVideo()
+    {
+        videoPlayer.Stop(); 
+        CheckVideoEnd(videoPlayer);
     }
 }
