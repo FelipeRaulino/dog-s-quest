@@ -9,6 +9,11 @@ public class PlayerTriggers : MonoBehaviour
 
     private GameManager _GameManager;
 
+
+    [Header("Sound Effects")]
+    public AudioSource hpCollectedSound;
+
+
     void Start(){
         _GameManager = FindObjectOfType(typeof(GameManager)) as GameManager;
     }
@@ -19,8 +24,12 @@ public class PlayerTriggers : MonoBehaviour
                 camB.SetActive(true);
             break;
 
-            case "Coletavel":
-                _GameManager.setGems(1);
+            case "LifePoint":
+                if (hpCollectedSound != null) {
+                    hpCollectedSound.Play();
+                }
+                
+                _GameManager.IncreaseHP(1);
                 Destroy(other.gameObject);
                 break;
         }

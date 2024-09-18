@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.SceneManagement;
 
 
 public class GiantController : MonoBehaviour
@@ -16,7 +17,12 @@ public class GiantController : MonoBehaviour
     private bool isPlayerVisible;
     private bool isWalk;
     public int HP = 3;
-    private bool isDied;
+    private bool isDied;    
+
+
+
+    [Header("Sound effects")]
+    public AudioSource getHitSound;
     
     void Start()
     {
@@ -25,8 +31,7 @@ public class GiantController : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         ChangeState(state);
     }
-
-    
+  
     void Update()
     {
         StateManager();
@@ -49,12 +54,16 @@ public class GiantController : MonoBehaviour
             case enemyState.FURY:
                 LookAt();
 
-                destination = _GameManager.player.position;
-                agent.destination = destination;
-                
+                if (agent.isOnNavMesh && agent.isActiveAndEnabled) {
+                    destination = _GameManager.player.position;
+                    agent.destination = destination;
+                    
 
-                if (agent.remainingDistance <= agent.stoppingDistance){
-                    Attack();
+                    if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance){
+                        Attack();
+                    }
+                } else {
+                    Debug.LogWarning("NavMeshAgent não está no NavMesh ou não está ativo.");
                 }
 
                 break;
@@ -65,25 +74,30 @@ public class GiantController : MonoBehaviour
     void ChangeState(enemyState newState){
         isAttack = true;
 
-        switch(newState){
-            case enemyState.FURY:
+        // Verifica se o NavMeshAgent está ativo e no NavMesh antes de definir o destino
+        if (agent.isOnNavMesh && agent.enabled)
+        {
+            switch (newState)
+            {
+                case enemyState.FURY:
+                    destination = transform.position;
+                    agent.stoppingDistance = 2.3f;
+                    agent.SetDestination(destination);
+                    break;
 
-                destination = transform.position;
-                agent.stoppingDistance = 2.5f;
-                agent.destination = destination;
+                case enemyState.DIE:
+                    destination = transform.position;
+                    agent.SetDestination(destination);
+                    break;
+            }
 
-                break;
-
-            case enemyState.DIE:
-                
-                destination = transform.position;
-                agent.destination = destination;
-                
-                break;
+            StartCoroutine("ATTACK");
+            state = newState;
         }
-
-        StartCoroutine("ATTACK");
-        state = newState;
+        else
+        {
+            Debug.LogWarning("NavMeshAgent não está no NavMesh ou não está ativo.");
+        }
 
     }
 
@@ -95,11 +109,6 @@ public class GiantController : MonoBehaviour
     IEnumerator Died(){
         isDied = true;
         yield return new WaitForSeconds(5f);
-
-        /* if (_GameManager.Perc(_GameManager.percDrop)){
-            Instantiate(_GameManager.gemPrefab, transform.position, _GameManager.gemPrefab.transform.rotation);
-        } */
-
         Destroy(this.gameObject);
     }
 
@@ -110,11 +119,14 @@ public class GiantController : MonoBehaviour
     }
 
     public void Attack(){
-        if (!isAttack && isPlayerVisible == true){
-            isAttack = true;
-            animator.SetTrigger("Attack");
-        }
+        // Verifica se o inimigo está morto antes de permitir o ataque
+        if (isDied || isAttack || !isPlayerVisible) { return; }
 
+        isAttack = true;
+        animator.SetTrigger("Attack");
+    }
+
+    public void AttackIsDone(){
         StartCoroutine("ATTACK");
     }
 
@@ -124,13 +136,20 @@ public class GiantController : MonoBehaviour
 
         HP -= amount;
 
-        if (HP > 0) {
-            ChangeState(enemyState.FURY);
+        if (getHitSound != null) {
+            getHitSound.Play();
+        }
 
-            animator.SetTrigger("GetHit");
+        if (HP > 0) {
+            animator.CrossFade("gethit", 0.1f);
+
+            isAttack = false;
         } else {
             ChangeState(enemyState.DIE);
-            animator.SetTrigger("Die");
+            
+            animator.CrossFade("gethit", 0.1f);
+            animator.CrossFade("death", 0.1f); 
+            
             StartCoroutine("Died");
         }
     }

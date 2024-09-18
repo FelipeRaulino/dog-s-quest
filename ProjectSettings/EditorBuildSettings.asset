@@ -6,6 +6,27 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/Menu/Menu.unity
+    guid: 0ede53e93b3a43149a1a4d3f3a1a69d1
+  - enabled: 1
+    path: Assets/Scenes/Cutscenes/00 - Cutscene Inicial/Cutscene Inicial.unity
+    guid: 84aa3610ad98a0a4a8deede14c2ad159
+  - enabled: 1
     path: Assets/Scenes/FlorestScene/FlorestScene.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
+  - enabled: 1
+    path: Assets/Scenes/Cutscenes/01 - Cutscene Fase 1/CutsceneFase1.unity
+    guid: 199852e92e04fda469bdc336afe673de
+  - enabled: 1
+    path: Assets/Scenes/MazeScene/MazeScene.unity
+    guid: f17a964275c0f9a44954f0424696ceb3
+  - enabled: 1
+    path: Assets/Scenes/Cutscenes/02 - Cutscene Fase 2/CutsceneFase2.unity
+    guid: 5c888fb4e8e060241b5f6206fc194190
+  - enabled: 1
+    path: Assets/Scenes/CastleScene/fase3-castelo.unity
+    guid: 0f30b31df1c21274da0aa193ec9e46e6
+  - enabled: 1
+    path: Assets/Scenes/Cutscenes/03 - Cutscene Final/CutsceneFinal.unity
+    guid: 559da9cc07333f84380945eef9f5679a
   m_configObjects: {}
