@@ -17,13 +17,13 @@ public class ScriptCutscene : MonoBehaviour
         StartCoroutine(LoadVideo());
 
         skipButton.gameObject.SetActive(false);
-        Invoke("ShowSkipButton", 5);
+        Invoke("ShowSkipButton", 10);
         skipButton.onClick.AddListener(SkipVideo);
     }
     void ShowSkipButton()
     {
         skipButton.gameObject.SetActive(true);
-        Invoke("HideSkipButton", 8);
+        Invoke("HideSkipButton", 15);
     }
 
     void HideSkipButton()

@@ -50,11 +50,14 @@ public class GameManager : MonoBehaviour
     public GameObject heartPrefab;
     public int percDrop = 25;
     public Text txtHP;
-
+    public Text txtCommands;
 
     private void Start(){
         rainModule = rainParticle.emission;
         txtHP.text = HP.ToString();
+
+        Invoke("ShowCommands", 10);
+
     }
 
     public void OnOffRain(bool isRain){
@@ -145,6 +148,10 @@ public class GameManager : MonoBehaviour
 
     public void Quit(){
         Application.Quit();
+    }
+
+    public void ShowCommands(){
+        txtCommands.enabled = false;
     }
 
 }
