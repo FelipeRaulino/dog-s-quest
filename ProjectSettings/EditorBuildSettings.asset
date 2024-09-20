@@ -29,4 +29,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Cutscenes/03 - Cutscene Final/CutsceneFinal.unity
     guid: 559da9cc07333f84380945eef9f5679a
+  - enabled: 1
+    path: Assets/Scenes/SairScene/SairScene.unity
+    guid: 092a79ce17251f145b78b51bce7cf989
   m_configObjects: {}

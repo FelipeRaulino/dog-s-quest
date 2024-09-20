@@ -37,8 +37,10 @@ public class MazeGameManager : MonoBehaviour
     public void decreaseHP(float amount){
         HP -= amount;
 
+        int HPConverted = System.Convert.ToInt32(HP);
+
         if (HP >= 0){
-            txtHP.text = HP.ToString();
+            txtHP.text = HPConverted.ToString();
         } else {
             txtHP.text = "0";
         }

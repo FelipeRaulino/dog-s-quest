@@ -109,12 +109,13 @@ public class GiantControllerFlorest : MonoBehaviour
 
     IEnumerator Died(){
         isDied = true;
-        yield return new WaitForSeconds(5f);
         
         if (missionCompleted != null) {
             missionCompleted.Play();
         }
 
+        yield return new WaitForSeconds(4f);
+        
         SceneManager.LoadScene("CutsceneFase1"); 
 
         Destroy(this.gameObject);

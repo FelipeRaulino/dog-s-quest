@@ -98,7 +98,7 @@ public class GameManager : MonoBehaviour
                     yield return new WaitForEndOfFrame();
                 }
 
-                postB.weight = 1;
+                postB.weight = 0.75f;
 
                 break;
             case false:
